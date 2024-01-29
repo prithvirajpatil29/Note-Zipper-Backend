@@ -21,10 +21,17 @@ app.use(express.json())
 app.use('/api/users', userRoutes)
 app.use('/api/notes', noteRoutes)
 app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static("build"))
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+if(process.env.SERVER === "production"){
+  app.use('/', (req, res, next) => {
+      return res.sendFile(path.resolve(__dirname, './build/index.html'))
+      next()
+  })
+}
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 app.use(notFound)
 app.use(errorHandler)
 const PORT  = process.env.PORT || 5000
